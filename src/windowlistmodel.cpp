@@ -4,7 +4,7 @@
 #include <QDebug>
 
 enum {
-  SurfaceRole = Qt::UserRole + 1,
+  ItemRole = Qt::UserRole + 1,
 };
 
 
@@ -50,7 +50,7 @@ void WindowListModel::removeWindow(CompositorWindow *window) {
 
 QHash<int, QByteArray> WindowListModel::roleNames() const {
   QHash<int, QByteArray> roles;
-  roles[SurfaceRole] = "surface";
+  roles[ItemRole] = "item";
 
   return roles;
 

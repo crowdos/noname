@@ -2,6 +2,7 @@
 #include <QWaylandSurface>
 #include <QWaylandSurfaceView>
 #include <QWaylandSurfaceItem>
+#include <QWaylandInputDevice>
 #include "windowlistmodel.h"
 #include "compositorwindow.h"
 
@@ -9,7 +10,8 @@
 
 Compositor::Compositor(QQuickWindow *window) :
   QWaylandQuickCompositor(window),
-  m_model(new WindowListModel(this)) {
+  m_model(new WindowListModel(this)),
+  m_fullScreen(0) {
   addDefaultShell();
 
 }
@@ -20,7 +22,31 @@ Compositor::~Compositor() {
 
 QWaylandSurfaceItem *Compositor::item(QWaylandSurface *surface) {
   // TODO: declarative ownership
-  return static_cast<QWaylandSurfaceItem *>(surface->views().first());
+  return surface ? static_cast<QWaylandSurfaceItem *>(surface->views().first()) : 0;
+}
+
+QWaylandQuickSurface *Compositor::fullScreenSurface() const {
+  return m_fullScreen;
+}
+
+void Compositor::setFullScreenSurface(QWaylandQuickSurface *surface) {
+  if (m_fullScreen == surface) {
+    return;
+  }
+
+  if (m_fullScreen) {
+    defaultInputDevice()->setKeyboardFocus(0);
+  }
+
+  m_fullScreen = surface;
+
+  if (m_fullScreen) {
+    QWaylandSurfaceItem *item = Compositor::item(m_fullScreen);
+    item->takeFocus();
+  }
+  // TODO:
+
+  emit fullScreenSurfaceChanged();
 }
 
 void Compositor::surfaceCreated(QWaylandSurface *surface) {
@@ -35,7 +61,11 @@ void Compositor::surfaceCreated(QWaylandSurface *surface) {
 }
 
 QWaylandSurfaceView *Compositor::createView(QWaylandSurface *surface) {
-  return new CompositorWindow(static_cast<QWaylandQuickSurface *>(surface));
+  CompositorWindow *win = new CompositorWindow(qobject_cast<QWaylandQuickSurface *>(surface));
+
+  win->setResizeSurfaceToItem(true);
+
+  return win;
 }
 
 void Compositor::sendCallbacks() {
@@ -50,6 +80,10 @@ void Compositor::surfaceMapped() {
   QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
   m_model->addWindow(static_cast<CompositorWindow *>(surface->views().first()));
   emit windowAdded(QVariant::fromValue(surface));
+
+  setSurfaceGeometry(surface);
+
+  setFullScreenSurface(qobject_cast<QWaylandQuickSurface *>(surface));
 }
 
 void Compositor::surfaceUnmapped() {
@@ -73,10 +107,22 @@ void Compositor::surfaceVisibilityChanged() {
 void Compositor::surfaceDestroyed() {
   QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
 
+  if (surface == m_fullScreen) {
+    setFullScreenSurface(0);
+  }
+
   if (!surface->views().isEmpty()) {
     m_model->removeWindow(static_cast<CompositorWindow *>(surface->views().first()));
     emit windowRemoved(QVariant::fromValue(surface));
 
     delete surface->views().first();
+  }
+}
+
+void Compositor::setSurfaceGeometry(QWaylandSurface *surface) {
+  QWaylandSurfaceItem *item = Compositor::item(surface);
+  if (item) {
+    item->setPos(QPointF(0, 0));
+    item->setSize(outputGeometry().size());
   }
 }
