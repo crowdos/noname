@@ -35,7 +35,6 @@ void Compositor::surfaceCreated(QWaylandSurface *surface) {
 }
 
 QWaylandSurfaceView *Compositor::createView(QWaylandSurface *surface) {
-  // TODO: who owns this?
   return new CompositorWindow(static_cast<QWaylandQuickSurface *>(surface));
 }
 
@@ -77,5 +76,7 @@ void Compositor::surfaceDestroyed() {
   if (!surface->views().isEmpty()) {
     m_model->removeWindow(static_cast<CompositorWindow *>(surface->views().first()));
     emit windowRemoved(QVariant::fromValue(surface));
+
+    delete surface->views().first();
   }
 }

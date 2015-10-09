@@ -8,6 +8,7 @@ class CompositorWindow : public QWaylandSurfaceItem {
 
 public:
   CompositorWindow(QWaylandQuickSurface *surface, QQuickItem *parent = 0);
+  ~CompositorWindow();
 };
 
 #endif /* COMPOSITOR_WINDOW_H */
