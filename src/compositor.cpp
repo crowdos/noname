@@ -9,7 +9,7 @@
 #include <QDebug>
 
 Compositor::Compositor(QQuickWindow *window) :
-  QWaylandQuickCompositor(window),
+  QWaylandQuickCompositor(window, 0, (ExtensionFlags)DefaultExtensions & ~QtKeyExtension),
   m_model(new WindowListModel(this)),
   m_fullScreen(0) {
   addDefaultShell();
@@ -35,6 +35,8 @@ void Compositor::setFullScreenSurface(QWaylandQuickSurface *surface) {
   }
 
   if (m_fullScreen) {
+    QWaylandSurfaceItem *item = Compositor::item(m_fullScreen);
+    item->setTouchEventsEnabled(false);
     defaultInputDevice()->setKeyboardFocus(0);
   }
 
@@ -43,6 +45,7 @@ void Compositor::setFullScreenSurface(QWaylandQuickSurface *surface) {
   if (m_fullScreen) {
     QWaylandSurfaceItem *item = Compositor::item(m_fullScreen);
     item->takeFocus();
+    item->setTouchEventsEnabled(true);
   }
   // TODO:
 
@@ -78,6 +81,7 @@ WindowListModel *Compositor::windowList() const {
 
 void Compositor::surfaceMapped() {
   QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
+  static_cast<QWaylandQuickSurface *>(surface)->setClientRenderingEnabled(true);
   m_model->addWindow(static_cast<CompositorWindow *>(surface->views().first()));
   emit windowAdded(QVariant::fromValue(surface));
 
