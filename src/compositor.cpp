@@ -61,8 +61,6 @@ void Compositor::setFullScreenSurface(QWaylandQuickSurface *surface) {
 }
 
 void Compositor::surfaceCreated(QWaylandSurface *surface) {
-  //  qDebug() << surface << surface->title() << surface->className();
-
   QObject::connect(surface, SIGNAL(mapped()), this, SLOT(surfaceMapped()));
   QObject::connect(surface, SIGNAL(unmapped()), this, SLOT(surfaceUnmapped()));
   QObject::connect(surface, SIGNAL(raiseRequested()), this, SLOT(surfaceRaiseRequested()));
@@ -101,18 +99,26 @@ void Compositor::surfaceMapped() {
 void Compositor::surfaceUnmapped() {
   //  QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
 
+  // TODO:
   qDebug() << Q_FUNC_INFO;
 }
 
 void Compositor::surfaceRaiseRequested() {
-  qDebug() << Q_FUNC_INFO;
+  QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
+
+  setFullScreenSurface(qobject_cast<QWaylandQuickSurface *>(surface));
 }
 
 void Compositor::surfaceLowerRequested() {
-  qDebug() << Q_FUNC_INFO;
+  QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
+
+  if (surface == m_fullScreen) {
+    setFullScreenSurface(0);
+  }
 }
 
 void Compositor::surfaceVisibilityChanged() {
+  // TODO:
   qDebug() << Q_FUNC_INFO;
 }
 
