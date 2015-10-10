@@ -38,6 +38,7 @@ void Compositor::setFullScreenSurface(QWaylandQuickSurface *surface) {
     QWaylandSurfaceItem *item = Compositor::item(m_fullScreen);
     item->setTouchEventsEnabled(false);
     defaultInputDevice()->setKeyboardFocus(0);
+    item->setParentItem(0);
   }
 
   m_fullScreen = surface;
