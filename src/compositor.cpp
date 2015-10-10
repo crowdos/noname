@@ -3,6 +3,7 @@
 #include <QWaylandSurfaceView>
 #include <QWaylandSurfaceItem>
 #include <QWaylandInputDevice>
+#include <QQmlEngine>
 #include "windowlistmodel.h"
 #include "compositorwindow.h"
 
@@ -21,8 +22,14 @@ Compositor::~Compositor() {
 }
 
 QWaylandSurfaceItem *Compositor::item(QWaylandSurface *surface) {
-  // TODO: declarative ownership
-  return surface ? static_cast<QWaylandSurfaceItem *>(surface->views().first()) : 0;
+  QWaylandSurfaceItem *item =
+    surface ? static_cast<QWaylandSurfaceItem *>(surface->views().first()) : 0;
+
+  if (item) {
+    QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+  }
+
+  return item;
 }
 
 QWaylandQuickSurface *Compositor::fullScreenSurface() const {
