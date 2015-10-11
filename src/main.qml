@@ -9,6 +9,33 @@ Rectangle {
     color: "white"
     focus: true
 
+    // TODO: configurable
+    readonly property real edgeSize: 20
+
+    QtObject {
+        id: edgeHandlers
+        property string emptyTopEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string emptyRightEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string emptyBottomEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string emptyLeftEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string fullTopEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string fullRightEdgeHandler: Qt.resolvedUrl("plugins/edge/Minimize.qml")
+        property string fullBottomEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string fullLeftEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string topEdgeHandler: compositor.fullScreenSurface ? fullTopEdgeHandler : emptyTopEdgeHandler
+        property string rightEdgeHandler: compositor.fullScreenSurface ? fullRightEdgeHandler : emptyRightEdgeHandler
+        property string bottomEdgeHandler: compositor.fullScreenSurface ? fullBottomEdgeHandler : emptyBottomEdgeHandler
+        property string leftEdgeHandler: compositor.fullScreenSurface ? fullLeftEdgeHandler : emptyLeftEdgeHandler
+    }
+
+    // Those properties are for edge handlers:
+//    property Item fullScreenSurface: compositor.fullScreenSurface
+    property real minimizeAnimationProgress: 0
+    property bool minimizeAnimationRunning: false
+
+//    property Item screenLocker: dimmer
+    property real screenLockAnimationProgress: 0
+
     WindowList {
         model: compositor.windowList
     }
@@ -18,9 +45,10 @@ Rectangle {
         color: "white"
         anchors.fill: parent
         visible: opacity > 0
-        opacity: minimizer.targetOpacity != 1 ? minimizer.targetOpacity : compositor.fullScreenSurface == null ? 0 : 1
+        opacity: minimizeAnimationRunning ? 1 - minimizeAnimationProgress : compositor.fullScreenSurface == null ? 0 : 1
 
         Behavior on opacity {
+            enabled: !minimizeAnimationRunning
             NumberAnimation {duration: 250}
         }
 
@@ -34,11 +62,6 @@ Rectangle {
                 }
             }
         }
-/*
-        MouseArea {
-            anchors.fill: parent
-            onClicked: compositor.fullScreenSurface = null
-        }*/
     }
 
     function windowAdded(window) {
@@ -48,48 +71,111 @@ Rectangle {
     }
 
     MouseArea {
-        id: minimizer
+        id: top
+        anchors {
+            top: parent.top
+            right: parent.right
+            left: parent.left
+        }
+        height: edgeSize
+
+        Loader {
+            id: topLoader
+            anchors.fill: parent
+            source: edgeHandlers.topEdgeHandler
+        }
+    }
+
+    MouseArea {
+        id: right
         anchors {
             top: parent.top
             right: parent.right
             bottom: parent.bottom
         }
 
-        width: 20
+        width: edgeSize
 
         property real lastX
         property real lastY
-        property real targetOpacity: 1
+        property bool sendStart: false
 
         onPressed: {
-            if (compositor.fullScreenSurface == null) {
+            sendStart = true
+            if (!rightLoader.item) {
                 mouse.accepted = false
+            } else {
+                lastX = mouse.x
+                lastY = mouse.y
             }
-
-            lastX = mouse.x
-            lastY = mouse.y
         }
 
         onPositionChanged: {
             var diff = lastX - mouse.x
             if (diff > width) {
-                if (diff > 100) {
-                    targetOpacity = 0
-                } else {
-                    targetOpacity = 1/diff
+                if (sendStart) {
+                    sendStart = false
+                    rightLoader.item.started()
                 }
+
+                rightLoader.item.dragProgress(diff)
             }
         }
 
         onReleased: {
             var diff = lastX - mouse.x
+            rightLoader.item.dragProgress(diff)
+            rightLoader.item.done(diff)
+        }
 
-            if (diff > 100) {
-                compositor.fullScreenSurface = null
-                targetOpacity = 1
-            } else {
-                targetOpacity = 1
-            }
+        Loader {
+            id: rightLoader
+            anchors.fill: parent
+            source: edgeHandlers.rightEdgeHandler
+        }
+    }
+
+    MouseArea {
+        id: bottom
+        anchors {
+            right: parent.right
+            left: parent.left
+            bottom: parent.bottom
+        }
+        height: edgeSize
+
+        Loader {
+            id: bottomLoader
+            anchors.fill: parent
+            source: edgeHandlers.bottomEdgeHandler
+        }
+    }
+
+    MouseArea {
+        id: left
+        anchors {
+            top: parent.top
+            left: parent.left
+            bottom: parent.bottom
+        }
+        width: edgeSize
+
+        Loader {
+            id: leftLoader
+            anchors.fill: parent
+            source: edgeHandlers.leftEdgeHandler
+        }
+    }
+
+    Rectangle {
+        id: dimmer
+        anchors.fill: parent
+        color: "black"
+        visible: opacity > 0
+        opacity: screenLockAnimationProgress
+        MouseArea {
+            anchors.fill: parent
+            enabled: dimmer.opacity > 0
         }
     }
 }
