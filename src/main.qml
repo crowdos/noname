@@ -14,7 +14,7 @@ Rectangle {
 
     QtObject {
         id: edgeHandlers
-        property string emptyTopEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string emptyTopEdgeHandler: Qt.resolvedUrl("plugins/edge/Lock.qml")
         property string emptyRightEdgeHandler: Qt.resolvedUrl("plugins/edge/")
         property string emptyBottomEdgeHandler: Qt.resolvedUrl("plugins/edge/")
         property string emptyLeftEdgeHandler: Qt.resolvedUrl("plugins/edge/")
@@ -35,6 +35,7 @@ Rectangle {
 
 //    property Item screenLocker: dimmer
     property real screenLockAnimationProgress: 0
+    property bool screenLockAnimationRunning: false
 
     WindowList {
         model: compositor.windowList
@@ -78,6 +79,38 @@ Rectangle {
             left: parent.left
         }
         height: edgeSize
+
+        property real lastX
+        property real lastY
+        property bool sendStart: false
+
+        onPressed: {
+            sendStart = true
+            if (!topLoader.item) {
+                mouse.accepted = false
+            } else {
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+        }
+
+        onPositionChanged: {
+            var diff = mouse.y - lastY
+            if (diff > height) {
+                if (sendStart) {
+                    sendStart = false
+                    topLoader.item.started()
+                }
+
+                topLoader.item.dragProgress(diff)
+            }
+        }
+
+        onReleased: {
+            var diff = mouse.y - lastY
+            topLoader.item.dragProgress(diff)
+            topLoader.item.done(diff)
+        }
 
         Loader {
             id: topLoader
@@ -168,11 +201,18 @@ Rectangle {
     }
 
     Rectangle {
+        // TODO:
         id: dimmer
         anchors.fill: parent
         color: "black"
         visible: opacity > 0
         opacity: screenLockAnimationProgress
+
+        Behavior on opacity {
+            enabled: !screenLockAnimationRunning
+            NumberAnimation {duration: 250}
+        }
+
         MouseArea {
             anchors.fill: parent
             enabled: dimmer.opacity > 0
