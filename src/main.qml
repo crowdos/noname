@@ -209,7 +209,6 @@ Rectangle {
         opacity: screenLockAnimationProgress
 
         Behavior on opacity {
-            enabled: !screenLockAnimationRunning
             NumberAnimation {duration: 250}
         }
 
