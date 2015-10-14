@@ -215,6 +215,7 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             enabled: dimmer.opacity > 0
+            onDoubleClicked: screenLockAnimationProgress = 0
         }
     }
 }
