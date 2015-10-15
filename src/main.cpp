@@ -4,6 +4,7 @@
 #include <QQuickItem>
 #include "compositor.h"
 #include "windowlistmodel.h"
+#include "declarativedirection.h"
 
 #define URL "Compositor"
 #define MAJOR 1
@@ -18,6 +19,7 @@ int main(int argc, char *argv[]) {
   QObject::connect(&view, SIGNAL(afterRendering()), &comp, SLOT(sendCallbacks()));
 
   qmlRegisterUncreatableType<WindowListModel>(URL, MAJOR, MINOR, "WindowListModel", "Cannot be created");
+  qmlRegisterUncreatableType<DeclarativeDirection>(URL, MAJOR, MINOR, "Direction", "Cannot be created");
 
   view.rootContext()->setContextProperty("compositor", &comp);
   view.setSource(QUrl("main.qml"));

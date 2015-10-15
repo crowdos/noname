@@ -71,55 +71,37 @@ Rectangle {
     function windowRemoved(window) {
     }
 
-    MouseArea {
+    EdgeHandler {
         id: top
         anchors {
             top: parent.top
             right: parent.right
             left: parent.left
         }
+
         height: edgeSize
-
-        property real lastX
-        property real lastY
-        property bool sendStart: false
-
-        onPressed: {
-            sendStart = true
-            if (!topLoader.item) {
-                mouse.accepted = false
-            } else {
-                lastX = mouse.x
-                lastY = mouse.y
-            }
-        }
-
+        direction: Direction.TopToBottom
+        source: edgeHandlers.topEdgeHandler
         onPositionChanged: {
             var diff = mouse.y - lastY
             if (diff > height) {
                 if (sendStart) {
                     sendStart = false
-                    topLoader.item.started()
+                    item.started()
                 }
 
-                topLoader.item.dragProgress(diff)
+                item.dragProgress(diff)
             }
         }
 
         onReleased: {
             var diff = mouse.y - lastY
-            topLoader.item.dragProgress(diff)
-            topLoader.item.done(diff)
-        }
-
-        Loader {
-            id: topLoader
-            anchors.fill: parent
-            source: edgeHandlers.topEdgeHandler
+            item.dragProgress(diff)
+            item.done(diff)
         }
     }
 
-    MouseArea {
+    EdgeHandler {
         id: right
         anchors {
             top: parent.top
@@ -128,47 +110,28 @@ Rectangle {
         }
 
         width: edgeSize
-
-        property real lastX
-        property real lastY
-        property bool sendStart: false
-
-        onPressed: {
-            sendStart = true
-            if (!rightLoader.item) {
-                mouse.accepted = false
-            } else {
-                lastX = mouse.x
-                lastY = mouse.y
-            }
-        }
-
+        direction: Direction.RightToLeft
+        source: edgeHandlers.rightEdgeHandler
         onPositionChanged: {
             var diff = lastX - mouse.x
             if (diff > width) {
                 if (sendStart) {
                     sendStart = false
-                    rightLoader.item.started()
+                    item.started()
                 }
 
-                rightLoader.item.dragProgress(diff)
+                item.dragProgress(diff)
             }
         }
 
         onReleased: {
             var diff = lastX - mouse.x
-            rightLoader.item.dragProgress(diff)
-            rightLoader.item.done(diff)
-        }
-
-        Loader {
-            id: rightLoader
-            anchors.fill: parent
-            source: edgeHandlers.rightEdgeHandler
+            item.dragProgress(diff)
+            item.done(diff)
         }
     }
 
-    MouseArea {
+    EdgeHandler {
         id: bottom
         anchors {
             right: parent.right
@@ -176,15 +139,10 @@ Rectangle {
             bottom: parent.bottom
         }
         height: edgeSize
-
-        Loader {
-            id: bottomLoader
-            anchors.fill: parent
-            source: edgeHandlers.bottomEdgeHandler
-        }
+        direction: Direction.BottomToTop
     }
 
-    MouseArea {
+    EdgeHandler {
         id: left
         anchors {
             top: parent.top
@@ -192,12 +150,7 @@ Rectangle {
             bottom: parent.bottom
         }
         width: edgeSize
-
-        Loader {
-            id: leftLoader
-            anchors.fill: parent
-            source: edgeHandlers.leftEdgeHandler
-        }
+        direction: Direction.LeftToRight
     }
 
     Rectangle {
