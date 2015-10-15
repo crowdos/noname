@@ -18,7 +18,7 @@ Rectangle {
         property string emptyRightEdgeHandler: Qt.resolvedUrl("plugins/edge/")
         property string emptyBottomEdgeHandler: Qt.resolvedUrl("plugins/edge/")
         property string emptyLeftEdgeHandler: Qt.resolvedUrl("plugins/edge/")
-        property string fullTopEdgeHandler: Qt.resolvedUrl("plugins/edge/")
+        property string fullTopEdgeHandler: Qt.resolvedUrl("plugins/edge/Close.qml")
         property string fullRightEdgeHandler: Qt.resolvedUrl("plugins/edge/Minimize.qml")
         property string fullBottomEdgeHandler: Qt.resolvedUrl("plugins/edge/")
         property string fullLeftEdgeHandler: Qt.resolvedUrl("plugins/edge/")
@@ -37,6 +37,9 @@ Rectangle {
     property real screenLockAnimationProgress: 0
     property bool screenLockAnimationRunning: false
 
+    property real closeAnimationProgress: 0
+    property bool closeAnimationRunning: false
+
     WindowList {
         model: compositor.windowList
     }
@@ -48,9 +51,16 @@ Rectangle {
         visible: opacity > 0
         opacity: minimizeAnimationRunning ? 1 - minimizeAnimationProgress : compositor.fullScreenSurface == null ? 0 : 1
 
+        scale: closeAnimationRunning ? Math.max(0.3, 1 - closeAnimationProgress) : 1
+
         Behavior on opacity {
             enabled: !minimizeAnimationRunning
             NumberAnimation {duration: 250}
+        }
+
+        Behavior on scale {
+            enabled: !minimizeAnimationRunning
+            NumberAnimation {duration: 50}
         }
 
         ShaderEffect {
