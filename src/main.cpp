@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterUncreatableType<DeclarativeDirection>(URL, MAJOR, MINOR, "Direction", "Cannot be created");
 
   view.rootContext()->setContextProperty("compositor", &comp);
-  view.setSource(QUrl("main.qml"));
+  view.setSource(QUrl("/usr/share/noname/qml/main.qml"));
   view.setResizeMode(QQuickView::SizeRootObjectToView);
 
   QObject::connect(&comp, SIGNAL(windowAdded(QVariant)), view.rootObject(), SLOT(windowAdded(QVariant)));
