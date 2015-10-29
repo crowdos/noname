@@ -1,0 +1,7 @@
+usr/bin/noname
+usr/share/noname/qml/main.qml
+usr/share/noname/qml/EdgeHandler.qml
+usr/share/noname/qml/WindowList.qml
+usr/share/noname/qml/plugins/edge/Close.qml
+usr/share/noname/qml/plugins/edge/Lock.qml
+usr/share/noname/qml/plugins/edge/Minimize.qml

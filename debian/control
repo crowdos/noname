@@ -1,0 +1,24 @@
+Source: noname
+Section: x11
+Priority: optional
+Maintainer: Mohammed Sameer <msameer@foolab.org>
+Build-Depends: debhelper (>= 9),
+               qtbase5-dev,
+               libqt5waylandcompositor5-dev,
+               qtdeclarative5-dev
+Standards-Version: 3.9.6
+
+Package: noname
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}, libqt5waylandcompositor5, qml-module-qtquick2
+Description: Noname wayland compositor
+ This package contains noname, an extensible and extendable wayland compositor
+ with its core plugins
+
+Package: noname-dbg
+Priority: extra
+Architecture: any
+Section: debug
+Depends: noname (= ${binary:Version}), ${misc:Depends}
+Description: Noname debugging symbols
+ This package contains the debugging symbols for noname
