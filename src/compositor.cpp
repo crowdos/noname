@@ -4,19 +4,17 @@
 #include <QWaylandSurfaceItem>
 #include <QWaylandInputDevice>
 #include <QQmlEngine>
-#include <QQuickWindow>
 #include "windowlistmodel.h"
 #include "compositorwindow.h"
 
 #include <QDebug>
 
-Compositor::Compositor(QQuickWindow *window) :
+Compositor::Compositor() :
   QWaylandQuickCompositor(0, (ExtensionFlags)DefaultExtensions & ~QtKeyExtension),
   m_model(new WindowListModel(this)),
   m_fullScreen(0) {
   addDefaultShell();
 
-  createOutput(window, "", "");
 }
 
 Compositor::~Compositor() {

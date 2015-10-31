@@ -14,7 +14,7 @@ class Compositor : public QObject, public QWaylandQuickCompositor {
   Q_PROPERTY(QWaylandQuickSurface *fullScreenSurface READ fullScreenSurface WRITE setFullScreenSurface NOTIFY fullScreenSurfaceChanged);
 
 public:
-  Compositor(QQuickWindow *window);
+  Compositor();
   ~Compositor();
 
   Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surface);

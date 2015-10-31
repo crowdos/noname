@@ -13,8 +13,10 @@
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
 
+  Compositor comp;
   QQuickView view;
-  Compositor comp(&view);
+
+  comp.createOutput(&view, "", "");
 
   QObject::connect(&view, SIGNAL(afterRendering()), &comp, SLOT(sendCallbacks()));
 
