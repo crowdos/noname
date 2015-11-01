@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   output->addMode(windowSize);
   output->create();
 
-  Compositor comp(display);
+  Compositor comp(display, windowSize);
 
   QObject::connect(shell, &ShellInterface::surfaceCreated,
 		   &comp, &Compositor::surfaceCreated);

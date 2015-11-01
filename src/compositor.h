@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QSize>
 
 class WindowListModel;
 namespace KWayland {
@@ -22,7 +23,7 @@ class Compositor : public QObject {
   Q_PROPERTY(SurfaceContainer *fullScreenSurface READ fullScreenSurface WRITE setFullScreenSurface NOTIFY fullScreenSurfaceChanged);
 
 public:
-  Compositor(KWayland::Server::Display& display, QObject *parent = 0);
+  Compositor(KWayland::Server::Display& display, const QSize& windowSize, QObject *parent = 0);
   ~Compositor();
 
   WindowListModel *windowList() const;
@@ -41,11 +42,12 @@ signals:
 private:
   void surfaceDestroyed(SurfaceContainer *container);
 
-  //  void setSurfaceGeometry(QWaylandSurface *surface);
+  void setSurfaceGeometry(KWayland::Server::ShellSurfaceInterface *surface);
 
   WindowListModel *m_model;
   SurfaceContainer *m_fullScreen;
 
+  QSize m_windowSize;
   KWayland::Server::Display& m_display;
   KWayland::Server::SeatInterface *m_seat;
 };

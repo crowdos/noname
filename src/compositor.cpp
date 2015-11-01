@@ -7,10 +7,12 @@
 #include "windowlistmodel.h"
 #include <QDebug>
 
-Compositor::Compositor(KWayland::Server::Display& display, QObject *parent) :
+Compositor::Compositor(KWayland::Server::Display& display,
+		       const QSize& windowSize, QObject *parent) :
   QObject(parent),
   m_model(new WindowListModel(this)),
   m_fullScreen(nullptr),
+  m_windowSize(windowSize),
   m_display(display) {
 
   m_seat = display.createSeat(this);
@@ -28,6 +30,8 @@ Compositor::~Compositor() {
 void Compositor::surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface) {
   SurfaceContainer *container = new SurfaceContainer(surface, this);
   QQmlEngine::setObjectOwnership(container, QQmlEngine::CppOwnership); // TODO: is this needed?
+
+  setSurfaceGeometry(surface);
 
   m_model->addWindow(container);
 
@@ -136,12 +140,9 @@ void Compositor::surfaceVisibilityChanged() {
   // TODO:
   qDebug() << Q_FUNC_INFO;
 }
-
-void Compositor::setSurfaceGeometry(QWaylandSurface *surface) {
-  QWaylandSurfaceItem *item = Compositor::item(surface);
-  if (item) {
-    item->setPos(QPointF(0, 0));
-    item->setSize(outputGeometry().size());
-  }
-}
 #endif
+
+void Compositor::setSurfaceGeometry(KWayland::Server::ShellSurfaceInterface *surface) {
+  surface->requestSize(m_windowSize);
+}
+
