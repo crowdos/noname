@@ -1,65 +1,78 @@
 #include "compositor.h"
-#include <QWaylandSurface>
-#include <QWaylandSurfaceView>
-#include <QWaylandSurfaceItem>
-#include <QWaylandInputDevice>
+#include <KWayland/Server/seat_interface.h>
+#include <KWayland/Server/display.h>
+#include <KWayland/Server/shell_interface.h>
 #include <QQmlEngine>
+#include "surfacecontainer.h"
 #include "windowlistmodel.h"
-#include "compositorwindow.h"
-
 #include <QDebug>
 
-Compositor::Compositor() :
-  QWaylandQuickCompositor(0, (ExtensionFlags)DefaultExtensions & ~QtKeyExtension),
+Compositor::Compositor(KWayland::Server::Display& display, QObject *parent) :
+  QObject(parent),
   m_model(new WindowListModel(this)),
-  m_fullScreen(0) {
-  addDefaultShell();
+  m_fullScreen(nullptr),
+  m_display(display) {
 
+  m_seat = display.createSeat(this);
+  m_seat->setHasKeyboard(true);
+  m_seat->setHasPointer(true);
+  m_seat->setHasTouch(true);
+  m_seat->setName(QStringLiteral("main"));
+  m_seat->create();
 }
 
 Compositor::~Compositor() {
 
 }
 
-QWaylandSurfaceItem *Compositor::item(QWaylandSurface *surface) {
-  QWaylandSurfaceItem *item =
-    surface ? static_cast<QWaylandSurfaceItem *>(surface->views().first()) : 0;
+void Compositor::surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface) {
+  SurfaceContainer *container = new SurfaceContainer(surface, this);
+  QQmlEngine::setObjectOwnership(container, QQmlEngine::CppOwnership); // TODO: is this needed?
 
-  if (item) {
-    QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-  }
+  m_model->addWindow(container);
 
-  return item;
+  setFullScreenSurface(container);
+
+  emit windowAdded(QVariant::fromValue(container));
+
+  QObject::connect(container, &SurfaceContainer::destroyed,
+		   this, [container, this] { surfaceDestroyed(container); });
+
+  qDebug() << Q_FUNC_INFO << container;
 }
 
-QWaylandQuickSurface *Compositor::fullScreenSurface() const {
+void Compositor::surfaceDestroyed(SurfaceContainer *container) {
+  // TODO: container will take care of destroying itself
+  qDebug() << Q_FUNC_INFO << container;
+
+  if (m_fullScreen == container) {
+    setFullScreenSurface(nullptr);
+  }
+
+  m_model->removeWindow(container);
+
+  emit windowRemoved(QVariant::fromValue(container));
+}
+
+SurfaceContainer *Compositor::fullScreenSurface() const {
   return m_fullScreen;
 }
 
-void Compositor::setFullScreenSurface(QWaylandQuickSurface *surface) {
+void Compositor::setFullScreenSurface(SurfaceContainer *surface) {
   if (m_fullScreen == surface) {
     return;
   }
 
-  if (m_fullScreen) {
-    QWaylandSurfaceItem *item = Compositor::item(m_fullScreen);
-    item->setTouchEventsEnabled(false);
-    defaultInputDevice()->setKeyboardFocus(0);
-    item->setFocus(false);
-  }
-
   m_fullScreen = surface;
 
-  if (m_fullScreen) {
-    QWaylandSurfaceItem *item = Compositor::item(m_fullScreen);
-    item->takeFocus();
-    item->setTouchEventsEnabled(true);
-  }
+  m_seat->setFocusedPointerSurface(surface ? surface->surface()->surface() : nullptr);
+
   // TODO:
 
   emit fullScreenSurfaceChanged();
 }
 
+#if 0
 void Compositor::surfaceCreated(QWaylandSurface *surface) {
   QObject::connect(surface, SIGNAL(mapped()), this, SLOT(surfaceMapped()));
   QObject::connect(surface, SIGNAL(unmapped()), this, SLOT(surfaceUnmapped()));
@@ -80,11 +93,13 @@ QWaylandSurfaceView *Compositor::createView(QWaylandSurface *surface) {
 void Compositor::sendCallbacks() {
   sendFrameCallbacks(surfaces());
 }
+#endif
 
 WindowListModel *Compositor::windowList() const {
   return m_model;
 }
 
+#if 0
 void Compositor::surfaceMapped() {
   QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
   static_cast<QWaylandQuickSurface *>(surface)->setClientRenderingEnabled(true);
@@ -122,21 +137,6 @@ void Compositor::surfaceVisibilityChanged() {
   qDebug() << Q_FUNC_INFO;
 }
 
-void Compositor::surfaceDestroyed() {
-  QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
-
-  if (surface == m_fullScreen) {
-    setFullScreenSurface(0);
-  }
-
-  if (!surface->views().isEmpty()) {
-    m_model->removeWindow(static_cast<CompositorWindow *>(surface->views().first()));
-    emit windowRemoved(QVariant::fromValue(surface));
-
-    delete surface->views().first();
-  }
-}
-
 void Compositor::setSurfaceGeometry(QWaylandSurface *surface) {
   QWaylandSurfaceItem *item = Compositor::item(surface);
   if (item) {
@@ -144,3 +144,4 @@ void Compositor::setSurfaceGeometry(QWaylandSurface *surface) {
     item->setSize(outputGeometry().size());
   }
 }
+#endif

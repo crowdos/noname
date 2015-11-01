@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtCompositor 1.0
 import Compositor 1.0
 
 GridView {
@@ -17,10 +16,10 @@ GridView {
             anchors.centerIn: parent
             width: parent.width * 0.75
             height: parent.height * 0.75
-            onClicked: compositor.fullScreenSurface = item.surface
-            ShaderEffect {
+            onClicked: compositor.fullScreenSurface = item
+            SurfaceContainerView {
                 anchors.fill: parent
-                property variant source: item
+                surface: item
             }
         }
     }

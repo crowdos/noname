@@ -1,16 +1,22 @@
 TARGET = noname
 
-QT += quick qml compositor
+QT += quick qml KWaylandServer
+CONFIG += c++11
 
 SOURCES += main.cpp \
            compositor.cpp \
+           surfacecontainer.cpp \
            windowlistmodel.cpp \
-           compositorwindow.cpp
+           surfacecontainerview.cpp
+#           compositorwindow.cpp
 
 HEADERS += compositor.h \
+           surfacecontainer.h \
            windowlistmodel.h \
-           compositorwindow.h \
-           declarativedirection.h
+           declarativedirection.h \
+           surfacecontainerview.h
+#           compositorwindow.h \
+
 
 target.path = /usr/bin/
 

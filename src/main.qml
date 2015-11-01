@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtCompositor 1.0
 import Compositor 1.0
 
 Rectangle {
@@ -63,15 +62,10 @@ Rectangle {
             NumberAnimation {duration: 50}
         }
 
-        ShaderEffect {
+        SurfaceContainerView {
             anchors.fill: parent
-            property variant source: compositor.item(compositor.fullScreenSurface)
-            enabled: source != null
-            onSourceChanged: {
-                if (source) {
-                    source.parent = fs
-                }
-            }
+            surface: compositor.fullScreenSurface
+            visible: surface != null
         }
     }
 

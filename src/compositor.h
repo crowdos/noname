@@ -1,43 +1,37 @@
 #ifndef COMPOSITOR_H
 #define COMPOSITOR_H
 
-#include <QWaylandQuickCompositor>
+#include <QObject>
 #include <QVariant>
 
-class QWaylandSurfaceItem;
 class WindowListModel;
-class QWaylandQuickSurface;
+namespace KWayland {
+  namespace Server {
+    class Display;
+    class SeatInterface;
+    class ShellSurfaceInterface;
+    class SurfaceInterface;
+  };
+};
 
-class Compositor : public QObject, public QWaylandQuickCompositor {
+class SurfaceContainer;
+
+class Compositor : public QObject {
   Q_OBJECT
   Q_PROPERTY(WindowListModel *windowList READ windowList CONSTANT);
-  Q_PROPERTY(QWaylandQuickSurface *fullScreenSurface READ fullScreenSurface WRITE setFullScreenSurface NOTIFY fullScreenSurfaceChanged);
+  Q_PROPERTY(SurfaceContainer *fullScreenSurface READ fullScreenSurface WRITE setFullScreenSurface NOTIFY fullScreenSurfaceChanged);
 
 public:
-  Compositor();
+  Compositor(KWayland::Server::Display& display, QObject *parent = 0);
   ~Compositor();
-
-  Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surface);
 
   WindowListModel *windowList() const;
 
-  QWaylandQuickSurface *fullScreenSurface() const;
-  void setFullScreenSurface(QWaylandQuickSurface *surface);
-
-protected:
-  void surfaceCreated(QWaylandSurface *surface);
-  QWaylandSurfaceView *createView(QWaylandSurface *surface);
+  SurfaceContainer *fullScreenSurface() const;
+  void setFullScreenSurface(SurfaceContainer *surface);
 
 public slots:
-  void sendCallbacks();
-
-private slots:
-  void surfaceMapped();
-  void surfaceUnmapped();
-  void surfaceRaiseRequested();
-  void surfaceLowerRequested();
-  void surfaceVisibilityChanged();
-  void surfaceDestroyed();
+  void surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface);
 
 signals:
   void windowAdded(QVariant window);
@@ -45,10 +39,15 @@ signals:
   void fullScreenSurfaceChanged();
 
 private:
-  void setSurfaceGeometry(QWaylandSurface *surface);
+  void surfaceDestroyed(SurfaceContainer *container);
+
+  //  void setSurfaceGeometry(QWaylandSurface *surface);
 
   WindowListModel *m_model;
-  QWaylandQuickSurface *m_fullScreen;
+  SurfaceContainer *m_fullScreen;
+
+  KWayland::Server::Display& m_display;
+  KWayland::Server::SeatInterface *m_seat;
 };
 
 

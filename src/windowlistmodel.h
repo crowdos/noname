@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 
-class CompositorWindow;
+class SurfaceContainer;
 
 class WindowListModel : public QAbstractListModel {
   Q_OBJECT
@@ -15,13 +15,13 @@ public:
   int rowCount(const QModelIndex& parent = QModelIndex()) const;
   QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 
-  void addWindow(CompositorWindow *window);
-  void removeWindow(CompositorWindow *window);
+  void addWindow(SurfaceContainer *window);
+  void removeWindow(SurfaceContainer *window);
 
   QHash<int, QByteArray> roleNames() const;
 
 private:
-  QList<CompositorWindow *> m_windows;
+  QList<SurfaceContainer *> m_windows;
 };
 
 #endif /* WINDOW_LIST_MODEL_H */

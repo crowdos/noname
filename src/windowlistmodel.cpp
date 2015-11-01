@@ -1,6 +1,5 @@
 #include "windowlistmodel.h"
-#include "compositorwindow.h"
-#include <QWaylandSurfaceItem>
+#include "surfacecontainer.h"
 #include <QDebug>
 
 enum {
@@ -22,14 +21,14 @@ int WindowListModel::rowCount(const QModelIndex& parent) const {
 }
 
 QVariant WindowListModel::data(const QModelIndex& index, int role) const {
-  if (index.row() < m_windows.size()) {
-    return QVariant::fromValue(static_cast<QWaylandSurfaceItem *>(m_windows[index.row()]));
+  if (index.row() < m_windows.size() && role == ItemRole) {
+    return QVariant::fromValue(m_windows[index.row()]);
   }
 
   return QVariant();
 }
 
-void WindowListModel::addWindow(CompositorWindow *window) {
+void WindowListModel::addWindow(SurfaceContainer *window) {
   qDebug() << Q_FUNC_INFO << window;
   if (m_windows.indexOf(window) == -1) {
     beginInsertRows(QModelIndex(), m_windows.size(), m_windows.size());
@@ -38,7 +37,7 @@ void WindowListModel::addWindow(CompositorWindow *window) {
   }
 }
 
-void WindowListModel::removeWindow(CompositorWindow *window) {
+void WindowListModel::removeWindow(SurfaceContainer *window) {
   qDebug() << Q_FUNC_INFO << window;
   int index = m_windows.indexOf(window);
   if (index != -1) {
