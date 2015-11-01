@@ -29,6 +29,10 @@ Compositor::~Compositor() {
 
 void Compositor::surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface) {
   SurfaceContainer *container = new SurfaceContainer(surface, this);
+
+  QObject::connect(container, &SurfaceContainer::destroyed,
+		   this, [container, this] { surfaceDestroyed(container); });
+
   QQmlEngine::setObjectOwnership(container, QQmlEngine::CppOwnership); // TODO: is this needed?
 
   setSurfaceGeometry(surface);
@@ -38,9 +42,6 @@ void Compositor::surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface
   setFullScreenSurface(container);
 
   emit windowAdded(QVariant::fromValue(container));
-
-  QObject::connect(container, &SurfaceContainer::destroyed,
-		   this, [container, this] { surfaceDestroyed(container); });
 
   qDebug() << Q_FUNC_INFO << container;
 }
