@@ -70,6 +70,12 @@ int main(int argc, char *argv[]) {
   view.setSource(qmlUrl);
   view.setResizeMode(QQuickView::SizeRootObjectToView);
   view.resize(windowSize);
+
+  QObject::connect(&comp, SIGNAL(windowAdded(QVariant)),
+		   view.rootObject(), SLOT(windowAdded(QVariant)));
+  QObject::connect(&comp, SIGNAL(windowRemoved(QVariant)),
+		   view.rootObject(), SLOT(windowRemoved(QVariant)));
+
   view.show(); // TODO full screen
 
   return app.exec();
