@@ -74,7 +74,16 @@ void Compositor::setFullScreenSurface(SurfaceContainer *surface) {
 
   m_fullScreen = surface;
 
-  m_seat->setFocusedPointerSurface(surface ? surface->surface()->surface() : nullptr);
+  // We need to pass a position to setFocusedPointerSurface() otherwise
+  // keyboard won't work. Might be that the surface does not know it's in focus
+  // or something but I personally have no idea.
+  if (surface) {
+    m_seat->setFocusedPointerSurface(surface->surface()->surface(), QPointF(0, 0));
+    m_seat->setFocusedKeyboardSurface(surface->surface()->surface());
+  } else {
+    m_seat->setFocusedPointerSurface(nullptr);
+    m_seat->setFocusedKeyboardSurface(nullptr);
+  }
 
   // TODO:
 
