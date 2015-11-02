@@ -27,6 +27,7 @@ GridView {
             width: parent.width * 0.75
             height: parent.height * 0.75
             onClicked: compositor.fullScreenSurface = item
+            enabled: compositor.fullScreenSurface == null
             SurfaceContainerView {
                 anchors.fill: parent
                 surface: item
