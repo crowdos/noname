@@ -39,8 +39,6 @@ void Compositor::surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface
 
   m_model->addWindow(container);
 
-  setFullScreenSurface(container);
-
   emit windowAdded(QVariant::fromValue(container));
 
   qDebug() << Q_FUNC_INFO << container;

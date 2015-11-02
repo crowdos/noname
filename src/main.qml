@@ -10,6 +10,7 @@ Rectangle {
 
     // TODO: configurable
     readonly property real edgeSize: 20
+    readonly property bool animationRunning: minimizeAnimationRunning || screenLockAnimationRunning || closeAnimationRunning
 
     QtObject {
         id: edgeHandlers
@@ -70,6 +71,9 @@ Rectangle {
     }
 
     function windowAdded(window) {
+        if (!animationRunning) {
+            compositor.fullScreenSurface = window
+        }
     }
 
     function windowRemoved(window) {
