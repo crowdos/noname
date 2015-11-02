@@ -31,6 +31,8 @@ public:
   SurfaceContainer *fullScreenSurface() const;
   void setFullScreenSurface(SurfaceContainer *surface);
 
+  KWayland::Server::SeatInterface *seat() const { return m_seat; }
+
 public slots:
   void surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface);
   void destroySurface(SurfaceContainer *surface);
