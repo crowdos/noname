@@ -18,7 +18,7 @@ Compositor::Compositor(KWayland::Server::Display& display,
   m_seat = display.createSeat(this);
   m_seat->setHasKeyboard(true);
   m_seat->setHasPointer(true);
-  m_seat->setHasTouch(true);
+  //  m_seat->setHasTouch(true);
   m_seat->setName(QStringLiteral("main"));
   m_seat->create();
 }
