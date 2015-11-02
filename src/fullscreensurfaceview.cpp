@@ -7,6 +7,7 @@
 #include <KWayland/Server/seat_interface.h>
 #include <QSGSimpleTextureNode>
 #include <QQuickWindow>
+#include <QDateTime>
 
 FullScreenSurfaceView::FullScreenSurfaceView(QQuickItem *parent) :
   QQuickItem(parent),
@@ -70,6 +71,8 @@ QSGNode *FullScreenSurfaceView::updatePaintNode(QSGNode *oldNode,
   }
 
   QImage img(m_surface->surface()->surface()->buffer()->data());
+  // TODO:
+  m_surface->surface()->surface()->frameRendered(QDateTime::currentMSecsSinceEpoch());
 
   QSGTexture *texture = window()->createTextureFromImage(img);
   texture->setFiltering(QSGTexture::Nearest);
