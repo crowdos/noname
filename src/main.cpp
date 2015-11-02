@@ -7,6 +7,7 @@
 #include "declarativedirection.h"
 #include "surfacecontainer.h"
 #include "surfacecontainerview.h"
+#include "fullscreensurfaceview.h"
 
 #include <KWayland/Server/display.h>
 #include <KWayland/Server/seat_interface.h>
@@ -62,10 +63,12 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  qmlRegisterUncreatableType<Compositor>(URL, MAJOR, MINOR, "Compositor", "Cannot be created");
   qmlRegisterUncreatableType<WindowListModel>(URL, MAJOR, MINOR, "WindowListModel", "Cannot be created");
   qmlRegisterUncreatableType<DeclarativeDirection>(URL, MAJOR, MINOR, "Direction", "Cannot be created");
   qmlRegisterUncreatableType<SurfaceContainer>(URL, MAJOR, MINOR, "SurfaceContainer", "Cannot be created");
   qmlRegisterType<SurfaceContainerView>(URL, MAJOR, MINOR, "SurfaceContainerView");
+  qmlRegisterType<FullScreenSurfaceView>(URL, MAJOR, MINOR, "FullScreenSurfaceView");
 
   view.setSource(qmlUrl);
   view.setResizeMode(QQuickView::SizeRootObjectToView);

@@ -44,15 +44,17 @@ Rectangle {
         model: compositor.windowList
     }
 
-    Rectangle {
+    FullScreenSurfaceView {
         id: fs
-        color: "white"
         anchors.fill: parent
-        visible: opacity > 0
+        visible: opacity > 0 && surface != null
         opacity: minimizeAnimationRunning ? 1 - minimizeAnimationProgress : compositor.fullScreenSurface == null ? 0 : 1
 
         scale: closeAnimationRunning ? Math.max(0.3, 1 - closeAnimationProgress) : 1
-
+        enabled: compositor.fullScreenSurface != null
+        focus: enabled
+        surface: compositor.fullScreenSurface
+        compositorObject: compositor
         Behavior on opacity {
             enabled: !minimizeAnimationRunning
             NumberAnimation {duration: 250}
@@ -61,12 +63,6 @@ Rectangle {
         Behavior on scale {
             enabled: !minimizeAnimationRunning
             NumberAnimation {duration: 50}
-        }
-
-        SurfaceContainerView {
-            anchors.fill: parent
-            surface: compositor.fullScreenSurface
-            visible: surface != null
         }
     }
 

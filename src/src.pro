@@ -7,14 +7,16 @@ SOURCES += main.cpp \
            compositor.cpp \
            surfacecontainer.cpp \
            windowlistmodel.cpp \
-           surfacecontainerview.cpp
+           surfacecontainerview.cpp \
+           fullscreensurfaceview.cpp
 #           compositorwindow.cpp
 
 HEADERS += compositor.h \
            surfacecontainer.h \
            windowlistmodel.h \
            declarativedirection.h \
-           surfacecontainerview.h
+           surfacecontainerview.h \
+           fullscreensurfaceview.h
 #           compositorwindow.h \
 
 
