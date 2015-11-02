@@ -183,6 +183,6 @@ void FullScreenSurfaceView::keyReleaseEvent(QKeyEvent *event) {
 
   if (surfaceIsValid()) {
     m_compositor->seat()->setTimestamp(event->timestamp());
-    m_compositor->seat()->keyPressed(event->nativeScanCode() - 8);
+    m_compositor->seat()->keyReleased(event->nativeScanCode() - 8);
   }
 }
