@@ -17,7 +17,7 @@ QtObject {
     function done(diff) {
         if (diff > 100) {
             closeAnimationProgress = 1
-            compositor.fullScreenSurface.destroySurface()
+            compositor.destroySurface(compositor.fullScreenSurface)
         } else {
             closeAnimationProgress = 0
         }

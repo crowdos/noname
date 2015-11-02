@@ -33,6 +33,7 @@ public:
 
 public slots:
   void surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface);
+  void destroySurface(SurfaceContainer *surface);
 
 signals:
   void windowAdded(QVariant window);

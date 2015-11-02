@@ -44,6 +44,12 @@ void Compositor::surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface
   qDebug() << Q_FUNC_INFO << container;
 }
 
+void Compositor::destroySurface(SurfaceContainer *surface) {
+  // TODO: This might not kill the client. I need to find a way to do so.
+  surface->deleteLater();
+  surface = nullptr;
+}
+
 void Compositor::surfaceDestroyed(SurfaceContainer *container) {
   // TODO: container will take care of destroying itself
   qDebug() << Q_FUNC_INFO << container;

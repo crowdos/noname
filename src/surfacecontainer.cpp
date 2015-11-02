@@ -11,7 +11,12 @@ SurfaceContainer::SurfaceContainer(KWayland::Server::ShellSurfaceInterface *surf
   // TODO:
   QObject::connect(m_surface,
 		   &KWayland::Server::ShellSurfaceInterface::destroyed,
-		   this, &SurfaceContainer::deleteLater);
+		   this, [this] {
+		     if (m_surface) {
+		       m_surface = nullptr;
+		       deleteLater();
+		     }
+		   });
 
   QObject::connect(m_surface, &KWayland::Server::ShellSurfaceInterface::titleChanged,
 		   this, &SurfaceContainer::titleChanged);
@@ -27,7 +32,10 @@ SurfaceContainer::SurfaceContainer(KWayland::Server::ShellSurfaceInterface *surf
 }
 
 SurfaceContainer::~SurfaceContainer() {
-
+  if (m_surface) {
+    m_surface->deleteLater();
+    m_surface = nullptr;
+  }
 }
 
 QString SurfaceContainer::title() const {
