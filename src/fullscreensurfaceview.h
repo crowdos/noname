@@ -28,10 +28,6 @@ protected:
   void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
   void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
   void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-#if 0
-  void hoverEnterEvent(QHoverEvent *event) Q_DECL_OVERRIDE;
-  void hoverMoveEvent(QHoverEvent *event) Q_DECL_OVERRIDE;
-#endif
   void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
   void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
   void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;

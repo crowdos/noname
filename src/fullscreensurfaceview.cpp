@@ -16,10 +16,6 @@ FullScreenSurfaceView::FullScreenSurfaceView(QQuickItem *parent) :
   setSmooth(true);
   setFlag(ItemHasContents, true);
   setAcceptedMouseButtons(Qt::AllButtons);
-
-#if 0
-  setAcceptHoverEvents(true);
-#endif
 }
 
 FullScreenSurfaceView::~FullScreenSurfaceView() {
@@ -101,60 +97,47 @@ bool FullScreenSurfaceView::surfaceIsValid() {
 }
 
 void FullScreenSurfaceView::mousePressEvent(QMouseEvent *event) {
-  //  QQuickItem::mousePressEvent(event);
-
-  qDebug() << Q_FUNC_INFO << surfaceIsValid();
-
   if (surfaceIsValid()) {
-    //    grabMouse();
-    //    setFocus(true);
     m_compositor->seat()->setTimestamp(event->timestamp());
+    // From the documentation:
+    // The location of the click is given by the last motion or enter event.
+    m_compositor->seat()->setPointerPos(event->localPos().toPoint());
     m_compositor->seat()->pointerButtonPressed(event->button());
+  } else {
+    QQuickItem::mousePressEvent(event);
   }
 }
 
 void FullScreenSurfaceView::mouseMoveEvent(QMouseEvent *event) {
-  //  QQuickItem::mouseMoveEvent(event);
-
-  qDebug() << Q_FUNC_INFO << surfaceIsValid();
   if (surfaceIsValid()) {
     m_compositor->seat()->setTimestamp(event->timestamp());
     m_compositor->seat()->setPointerPos(event->localPos().toPoint());
+  } else {
+    QQuickItem::mouseMoveEvent(event);
   }
 }
 
 void FullScreenSurfaceView::mouseReleaseEvent(QMouseEvent *event) {
-  //  QQuickItem::mouseReleaseEvent(event);
-
-  qDebug() << Q_FUNC_INFO << surfaceIsValid();
-
   if (surfaceIsValid()) {
     m_compositor->seat()->setTimestamp(event->timestamp());
+    // From the documentation:
+    // The location of the click is given by the last motion or enter event.
+    m_compositor->seat()->setPointerPos(event->localPos().toPoint());
     m_compositor->seat()->pointerButtonReleased(event->button());
+  } else {
+    QQuickItem::mouseReleaseEvent(event);
   }
 }
 
-#if 0
-void FullScreenSurfaceView::hoverEnterEvent(QHoverEvent *event) {
-  QQuickItem::hoverEnterEvent(event);
-
-  qDebug() << Q_FUNC_INFO;
-}
-
-void FullScreenSurfaceView::hoverMoveEvent(QHoverEvent *event) {
-  QQuickItem::hoverMoveEvent(event);
-
-  qDebug() << Q_FUNC_INFO;
-}
-#endif
-
 void FullScreenSurfaceView::wheelEvent(QWheelEvent *event) {
-  QQuickItem::wheelEvent(event);
-
+  // TODO: Directions are reversed :(
+  // To test: qmlscene -platform wayland
   // Stolen blindly from KWayland renderingservertest.cpp
   if (surfaceIsValid()) {
     m_compositor->seat()->setTimestamp(event->timestamp());
-    const QPoint &angle = event->angleDelta() / (8 * 15);
+    m_compositor->seat()->setPointerPos(event->pos());
+
+    const QPoint& angle = event->angleDelta() / (8 * 15);
     if (angle.x() != 0) {
       m_compositor->seat()->pointerAxis(Qt::Horizontal, angle.x());
     }
@@ -162,27 +145,25 @@ void FullScreenSurfaceView::wheelEvent(QWheelEvent *event) {
     if (angle.y() != 0) {
       m_compositor->seat()->pointerAxis(Qt::Vertical, angle.y());
     }
+  } else {
+    QQuickItem::wheelEvent(event);
   }
 }
 
 void FullScreenSurfaceView::keyPressEvent(QKeyEvent *event) {
-  //  QQuickItem::keyPressEvent(event);
-
-  qDebug() << Q_FUNC_INFO << surfaceIsValid();
-
   if (surfaceIsValid()) {
     m_compositor->seat()->setTimestamp(event->timestamp());
     m_compositor->seat()->keyPressed(event->nativeScanCode() - 8);
+  } else {
+    QQuickItem::keyPressEvent(event);
   }
 }
 
 void FullScreenSurfaceView::keyReleaseEvent(QKeyEvent *event) {
-  //  QQuickItem::keyReleaseEvent(event);
-
-  qDebug() << Q_FUNC_INFO << surfaceIsValid();
-
   if (surfaceIsValid()) {
     m_compositor->seat()->setTimestamp(event->timestamp());
     m_compositor->seat()->keyReleased(event->nativeScanCode() - 8);
+  } else {
+    QQuickItem::keyReleaseEvent(event);
   }
 }
