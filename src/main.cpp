@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQuickView>
 #include <QQmlContext>
+#include <QCommandLineParser>
 
 #include "compositor.h"
 #include "windowlistmodel.h"
@@ -24,10 +25,45 @@
 
 using namespace KWayland::Server;
 
-const QSize windowSize(400, 600); // TODO:
-
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
+  app.setApplicationName("NoName");
+
+  QCommandLineParser parser;
+
+  parser.setApplicationDescription("NoNme Wayland compositor");
+  parser.addHelpOption();
+  parser.addVersionOption();
+
+  QCommandLineOption qml("qml", QGuiApplication::translate("main", "QML file to load"),
+			 QCoreApplication::translate("main", "qml file"));
+  parser.addOption(qml);
+
+  QCommandLineOption size(QStringList() << "s" << "size",
+			  QCoreApplication::translate("main", "Window size"),
+			  QCoreApplication::translate("main", "size"));
+  parser.addOption(size);
+
+  parser.process(app);
+
+  QSize windowSize(400, 600);
+
+  if (parser.isSet(size)) {
+    QString s = parser.value(size);
+    QStringList parts(s.split('x'));
+    if (parts.size() != 2) {
+      qFatal("Invalid size %s", qPrintable(s));
+    }
+
+    int width = parts[0].toInt();
+    int height = parts[1].toInt();
+
+    if (width <= 0 || height <= 0) {
+      qFatal("Invalid size %s", qPrintable(s));
+    }
+
+    windowSize = QSize(width, height);
+  }
 
   Display display;
   display.start();
@@ -58,10 +94,8 @@ int main(int argc, char *argv[]) {
   view.rootContext()->setContextProperty("compositor", &comp);
 
   QUrl qmlUrl("/usr/share/noname/qml/main.qml");
-  if (int index = app.arguments().indexOf("-qml") != -1) {
-    if (index + 1 < app.arguments().size()) {
-      qmlUrl = QUrl(app.arguments()[index + 1]);
-    }
+  if (parser.isSet(qml)) {
+    qmlUrl = parser.value(qml);
   }
 
   qmlRegisterUncreatableType<Compositor>(URL, MAJOR, MINOR, "Compositor", "Cannot be created");
@@ -73,12 +107,14 @@ int main(int argc, char *argv[]) {
 
   view.setSource(qmlUrl);
   view.setResizeMode(QQuickView::SizeRootObjectToView);
-  view.resize(windowSize);
 
   QObject::connect(&comp, SIGNAL(windowAdded(QVariant)),
 		   view.rootObject(), SLOT(windowAdded(QVariant)));
   QObject::connect(&comp, SIGNAL(windowRemoved(QVariant)),
 		   view.rootObject(), SLOT(windowRemoved(QVariant)));
+
+  view.setMinimumSize(windowSize);
+  view.setMaximumSize(windowSize);
 
   view.show(); // TODO full screen
 
