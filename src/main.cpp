@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
   display.createShm();
 
   OutputInterface *output = display.createOutput(&display);
+  output->setGlobalPosition(QPoint(0, 0));
   output->setPhysicalSize(QSize(269, 202)); // TODO:
   output->addMode(windowSize);
   output->create();
