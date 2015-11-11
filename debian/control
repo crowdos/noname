@@ -12,7 +12,7 @@ Package: noname
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         libqt5waylandcompositor5,
+         libkf5waylandserver5,
          qml-module-qtquick2,
          qml-module-org-nemomobile-configuration
 Description: Noname wayland compositor
