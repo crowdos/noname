@@ -2,6 +2,13 @@ import QtQuick 2.0
 import Compositor 1.0
 
 Rectangle {
+    BackgroundImage {
+        anchors.centerIn: parent
+        size: Math.max(parent.width, parent.height)
+        // TODO: Configurable.
+        source: "/usr/share/backgrounds/crowdos/76682-dark_sunset_wide_2.jpg"
+    }
+
     id: root
     width: 200
     height: 400
