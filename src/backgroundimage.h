@@ -35,6 +35,7 @@ private:
   QString m_source;
   QSGTexture *m_texture;
   bool m_sizeChanged;
+  bool m_sourceChanged;
 };
 
 #endif /* BACKGROUND_IMAGE_H */

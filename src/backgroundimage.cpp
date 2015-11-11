@@ -10,7 +10,8 @@ BackgroundImage::BackgroundImage(QQuickItem *parent) :
   QQuickItem(parent),
   m_size(0),
   m_texture(0),
-  m_sizeChanged(false) {
+  m_sizeChanged(false),
+  m_sourceChanged(false) {
 
   setFlag(ItemHasContents, true);
 }
@@ -52,7 +53,7 @@ void BackgroundImage::setSource(const QString& source) {
 
     emit sourceChanged();
 
-    m_sizeChanged = false;
+    m_sourceChanged = true;
     updateImage();
   }
 }
@@ -66,9 +67,14 @@ void BackgroundImage::updateImage() {
     return;
   }
 
-  // Only size has changed.
-  if (m_sizeChanged) {
-    return;
+  if (m_sourceChanged) {
+    // No need.
+    m_sizeChanged = false;
+  } else {
+    if (m_sizeChanged) {
+      // no need to do anything.
+      return;
+    }
   }
 
   qreal sz = qMax(width(), height());
@@ -97,6 +103,7 @@ void BackgroundImage::updateImage() {
 
   m_texture = window()->createTextureFromImage(img);
 
+  m_sourceChanged = false;
   if (m_texture) {
     update();
   }
