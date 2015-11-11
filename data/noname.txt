@@ -1,0 +1,10 @@
+[apps/noname]
+edgeSize=20
+emptyTopEdgeHandler='/usr/share/noname/qml/plugins/edge/Lock.qml'
+emptyRightEdgeHandler='/usr/share/noname/qml/'
+emptyBottomEdgeHandler='/usr/share/noname/qml/'
+emptyLeftEdgeHandler='/usr/share/noname/qml/'
+fullTopEdgeHandler='/usr/share/noname/qml/plugins/edge/Close.qml'
+fullRightEdgeHandler='/usr/share/noname/qml/plugins/edge/Minimize.qml'
+fullBottomEdgeHandler='/usr/share/noname/qml/'
+fullLeftEdgeHandler='/usr/share/noname/qml/'

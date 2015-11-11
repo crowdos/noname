@@ -35,4 +35,7 @@ edge.files = plugins/edge/Close.qml \
 
 edge.path = /usr/share/noname/qml/plugins/edge/
 
-INSTALLS += target qml edge
+dconf.files = ../data/noname.txt
+dconf.path = /etc/dconf/db/crowdos.d/
+
+INSTALLS += target qml edge dconf

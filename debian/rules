@@ -11,3 +11,7 @@ override_dh_install:
 
 override_dh_strip:
 	dh_strip -pnoname --dbg-package=noname-dbg
+
+override_dh_installdeb:
+	dh_installdeb
+	rm debian/noname/DEBIAN/conffiles

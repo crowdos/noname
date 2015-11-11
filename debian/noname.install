@@ -5,3 +5,6 @@ usr/share/noname/qml/WindowList.qml
 usr/share/noname/qml/plugins/edge/Close.qml
 usr/share/noname/qml/plugins/edge/Lock.qml
 usr/share/noname/qml/plugins/edge/Minimize.qml
+
+# dconf
+etc/dconf/db/crowdos.d/noname.txt

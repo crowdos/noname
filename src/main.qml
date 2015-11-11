@@ -1,7 +1,22 @@
 import QtQuick 2.0
 import Compositor 1.0
+import org.nemomobile.configuration 1.0
 
 Rectangle {
+    ConfigurationGroup {
+        id: settings
+        path: "/apps/noname"
+        property real edgeSize
+        property string emptyTopEdgeHandler
+        property string emptyRightEdgeHandler
+        property string emptyBottomEdgeHandler
+        property string emptyLeftEdgeHandler
+        property string fullTopEdgeHandler
+        property string fullRightEdgeHandler
+        property string fullBottomEdgeHandler
+        property string fullLeftEdgeHandler
+    }
+
     BackgroundImage {
         anchors.centerIn: parent
         size: Math.max(parent.width, parent.height)
@@ -15,24 +30,14 @@ Rectangle {
     color: "white"
     focus: true
 
-    // TODO: configurable
-    readonly property real edgeSize: 20
     readonly property bool animationRunning: minimizeAnimationRunning || screenLockAnimationRunning || closeAnimationRunning
 
     QtObject {
         id: edgeHandlers
-        property string emptyTopEdgeHandler: Qt.resolvedUrl("plugins/edge/Lock.qml")
-        property string emptyRightEdgeHandler: Qt.resolvedUrl("plugins/edge/")
-        property string emptyBottomEdgeHandler: Qt.resolvedUrl("plugins/edge/")
-        property string emptyLeftEdgeHandler: Qt.resolvedUrl("plugins/edge/")
-        property string fullTopEdgeHandler: Qt.resolvedUrl("plugins/edge/Close.qml")
-        property string fullRightEdgeHandler: Qt.resolvedUrl("plugins/edge/Minimize.qml")
-        property string fullBottomEdgeHandler: Qt.resolvedUrl("plugins/edge/")
-        property string fullLeftEdgeHandler: Qt.resolvedUrl("plugins/edge/")
-        property string topEdgeHandler: compositor.fullScreenSurface ? fullTopEdgeHandler : emptyTopEdgeHandler
-        property string rightEdgeHandler: compositor.fullScreenSurface ? fullRightEdgeHandler : emptyRightEdgeHandler
-        property string bottomEdgeHandler: compositor.fullScreenSurface ? fullBottomEdgeHandler : emptyBottomEdgeHandler
-        property string leftEdgeHandler: compositor.fullScreenSurface ? fullLeftEdgeHandler : emptyLeftEdgeHandler
+        property string topEdgeHandler: compositor.fullScreenSurface ? settings.fullTopEdgeHandler : settings.emptyTopEdgeHandler
+        property string rightEdgeHandler: compositor.fullScreenSurface ? settings.fullRightEdgeHandler : settings.emptyRightEdgeHandler
+        property string bottomEdgeHandler: compositor.fullScreenSurface ? settings.fullBottomEdgeHandler : settings.emptyBottomEdgeHandler
+        property string leftEdgeHandler: compositor.fullScreenSurface ? settings.fullLeftEdgeHandler : settings.emptyLeftEdgeHandler
     }
 
     // Those properties are for edge handlers:
@@ -90,7 +95,7 @@ Rectangle {
             left: parent.left
         }
 
-        height: edgeSize
+        height: settings.edgeSize
         direction: Direction.TopToBottom
         source: edgeHandlers.topEdgeHandler
         onPositionChanged: {
@@ -120,7 +125,7 @@ Rectangle {
             bottom: parent.bottom
         }
 
-        width: edgeSize
+        width: settings.edgeSize
         direction: Direction.RightToLeft
         source: edgeHandlers.rightEdgeHandler
         onPositionChanged: {
@@ -149,7 +154,7 @@ Rectangle {
             left: parent.left
             bottom: parent.bottom
         }
-        height: edgeSize
+        height: settings.edgeSize
         direction: Direction.BottomToTop
     }
 
@@ -160,7 +165,7 @@ Rectangle {
             left: parent.left
             bottom: parent.bottom
         }
-        width: edgeSize
+        width: settings.edgeSize
         direction: Direction.LeftToRight
     }
 

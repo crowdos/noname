@@ -10,7 +10,11 @@ Standards-Version: 3.9.6
 
 Package: noname
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libqt5waylandcompositor5, qml-module-qtquick2
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         libqt5waylandcompositor5,
+         qml-module-qtquick2,
+         qml-module-org-nemomobile-configuration
 Description: Noname wayland compositor
  This package contains noname, an extensible and extendable wayland compositor
  with its core plugins
