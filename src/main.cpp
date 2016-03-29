@@ -10,6 +10,7 @@
 #include "surfacecontainerview.h"
 #include "fullscreensurfaceview.h"
 #include "backgroundimage.h"
+#include "screenblank.h"
 
 #include <KWayland/Server/display.h>
 #include <KWayland/Server/seat_interface.h>
@@ -106,6 +107,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterType<SurfaceContainerView>(URL, MAJOR, MINOR, "SurfaceContainerView");
   qmlRegisterType<FullScreenSurfaceView>(URL, MAJOR, MINOR, "FullScreenSurfaceView");
   qmlRegisterType<BackgroundImage>(URL, MAJOR, MINOR, "BackgroundImage");
+  qmlRegisterType<ScreenBlank>(URL, MAJOR, MINOR, "ScreenBlank");
 
   view.setSource(qmlUrl);
   view.setResizeMode(QQuickView::SizeRootObjectToView);

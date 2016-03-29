@@ -1,6 +1,6 @@
 TARGET = noname
 
-QT += quick qml KWaylandServer
+QT += quick qml KWaylandServer gui_private
 CONFIG += c++11
 
 SOURCES += main.cpp \
@@ -9,7 +9,8 @@ SOURCES += main.cpp \
            windowlistmodel.cpp \
            surfacecontainerview.cpp \
            fullscreensurfaceview.cpp \
-           backgroundimage.cpp
+           backgroundimage.cpp \
+           screenblank.cpp
 #           compositorwindow.cpp
 
 HEADERS += compositor.h \
@@ -18,7 +19,8 @@ HEADERS += compositor.h \
            declarativedirection.h \
            surfacecontainerview.h \
            fullscreensurfaceview.h \
-           backgroundimage.h
+           backgroundimage.h \
+           screenblank.h
 #           compositorwindow.h \
 
 
