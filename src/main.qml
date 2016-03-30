@@ -94,6 +94,7 @@ Rectangle {
     }
 
     function lock() {
+        screenLockAnimationProgress = 1
         screenLocked = true
     }
 
