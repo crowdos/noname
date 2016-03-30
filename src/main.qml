@@ -3,6 +3,11 @@ import Compositor 1.0
 import org.nemomobile.configuration 1.0
 
 Rectangle {
+    ScreenBlank {
+        id: screenBlank
+        blank: screenLocked
+    }
+
     ConfigurationGroup {
         id: settings
         path: "/apps/noname"
@@ -48,6 +53,7 @@ Rectangle {
 //    property Item screenLocker: dimmer
     property real screenLockAnimationProgress: 0
     property bool screenLockAnimationRunning: false
+    property bool screenLocked: false
 
     property real closeAnimationProgress: 0
     property bool closeAnimationRunning: false
@@ -85,6 +91,15 @@ Rectangle {
     }
 
     function windowRemoved(window) {
+    }
+
+    function lock() {
+        screenLocked = true
+    }
+
+    function unlock() {
+        screenLockAnimationProgress = 0
+        screenLocked = false
     }
 
     EdgeHandler {
@@ -184,7 +199,25 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             enabled: dimmer.opacity > 0
-            onDoubleClicked: screenLockAnimationProgress = 0
+            onDoubleClicked: unlock()
+        }
+    }
+
+    PowerKey {
+        property bool pressed: false
+
+        onStateChanged: {
+            // This is a workaround for hwhal sending the current state in the beginning
+            // If we do not receive a pressed state then we just eat the released event.
+            if (state == PowerKey.Pressed) {
+                pressed = true
+            } else if (state == PowerKey.Released && pressed) {
+                if (screenBlank.blank) {
+                    unlock()
+                } else {
+                    lock()
+                }
+            }
         }
     }
 }

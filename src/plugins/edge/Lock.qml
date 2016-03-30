@@ -18,6 +18,7 @@ QtObject {
     function done(diff) {
         if (diff > 100) {
             screenLockAnimationProgress = 1
+            lock()
         } else {
             screenLockAnimationProgress = 0
         }
