@@ -1,6 +1,7 @@
 #include "screenblank.h"
 #include <QGuiApplication>
 #include <qpa/qplatformnativeinterface.h>
+#include <QQuickWindow>
 
 ScreenBlank::ScreenBlank(QObject *parent) :
   QObject(parent),
@@ -27,5 +28,18 @@ void ScreenBlank::setBlank(bool blank) {
 }
 
 void ScreenBlank::update() {
-  m_native->nativeResourceFunctionForIntegration(m_blank ? "displayoff" : "displayon");
+  auto callUpdate = [] () {
+    QWindowList windows(QGuiApplication::topLevelWindows());
+    for (int x = 0; x < windows.size(); x++) {
+      if (QQuickWindow *win = dynamic_cast<QQuickWindow *>(windows[x])) {
+	win->update();
+      }
+    }
+  };
+
+  m_native->nativeResourceForIntegration(m_blank ? "displayoff" : "displayon");
+
+  if (!m_blank) {
+    callUpdate();
+  }
 }
