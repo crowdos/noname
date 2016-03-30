@@ -198,7 +198,7 @@ Rectangle {
 
         MouseArea {
             anchors.fill: parent
-            enabled: dimmer.opacity > 0
+            enabled: screenBlank.blank
             onDoubleClicked: unlock()
         }
     }
