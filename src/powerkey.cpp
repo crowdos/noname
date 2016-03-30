@@ -25,9 +25,9 @@ PowerKey::PowerKey(QObject *parent) :
 		     char c;
 		     while (::read(m_notifier->socket(), &c, sizeof(c)) > 0) {
 		       if (c == KEY_RELEASED) {
-			 setState(Pressed);
-		       } else if (c == KEY_PRESSED) {
 			 setState(Released);
+		       } else if (c == KEY_PRESSED) {
+			 setState(Pressed);
 		       }
 		     }
 		   });
