@@ -10,7 +10,8 @@ SOURCES += main.cpp \
            surfacecontainerview.cpp \
            fullscreensurfaceview.cpp \
            backgroundimage.cpp \
-           screenblank.cpp
+           screenblank.cpp \
+           powerkey.cpp
 #           compositorwindow.cpp
 
 HEADERS += compositor.h \
@@ -20,9 +21,11 @@ HEADERS += compositor.h \
            surfacecontainerview.h \
            fullscreensurfaceview.h \
            backgroundimage.h \
-           screenblank.h
+           screenblank.h \
+           powerkey.h
 #           compositorwindow.h \
 
+LIBS += -lhwhal
 
 target.path = /usr/bin/
 

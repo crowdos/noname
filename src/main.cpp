@@ -11,6 +11,7 @@
 #include "fullscreensurfaceview.h"
 #include "backgroundimage.h"
 #include "screenblank.h"
+#include "powerkey.h"
 
 #include <KWayland/Server/display.h>
 #include <KWayland/Server/seat_interface.h>
@@ -108,6 +109,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterType<FullScreenSurfaceView>(URL, MAJOR, MINOR, "FullScreenSurfaceView");
   qmlRegisterType<BackgroundImage>(URL, MAJOR, MINOR, "BackgroundImage");
   qmlRegisterType<ScreenBlank>(URL, MAJOR, MINOR, "ScreenBlank");
+  qmlRegisterType<PowerKey>(URL, MAJOR, MINOR, "PowerKey");
 
   view.setSource(qmlUrl);
   view.setResizeMode(QQuickView::SizeRootObjectToView);
