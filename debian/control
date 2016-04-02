@@ -17,7 +17,8 @@ Depends: ${misc:Depends},
          libkf5waylandserver5,
          qml-module-qtquick2,
          qml-module-org-nemomobile-configuration,
-         login
+         login,
+         dbus-x11
 Description: Noname wayland compositor
  This package contains noname, an extensible and extendable wayland compositor
  with its core plugins
