@@ -25,7 +25,7 @@ HEADERS += compositor.h \
            powerkey.h
 #           compositorwindow.h \
 
-LIBS += -lhwhal
+LIBS += -lhwhal -lhwhal-loopintegration-glib
 
 target.path = /usr/bin/
 

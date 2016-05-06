@@ -5,7 +5,7 @@
 
 class Context;
 class Keys;
-class QSocketNotifier;
+class LoopIntegration;
 
 class PowerKey : public QObject {
   Q_OBJECT
@@ -29,9 +29,9 @@ signals:
   void stateChanged();
 
 private:
+  LoopIntegration *m_loop;
   Context *m_ctx;
   Keys *m_keys;
-  QSocketNotifier *m_notifier;
   State m_state;
 };
 

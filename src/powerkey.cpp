@@ -1,14 +1,14 @@
 #include "powerkey.h"
 #include <hwhal/context.h>
 #include <hwhal/keys.h>
-#include <QSocketNotifier>
+#include <hwhal/loopintegration/glib.h>
 #include <unistd.h>
 
 PowerKey::PowerKey(QObject *parent) :
   QObject(parent),
-  m_ctx(Context::create()),
+  m_loop(new LoopIntegrationGlib),
+  m_ctx(Context::create(m_loop)),
   m_keys(nullptr),
-  m_notifier(nullptr),
   m_state(Unknown) {
 
   if (!m_ctx) {
@@ -17,30 +17,22 @@ PowerKey::PowerKey(QObject *parent) :
 
   m_keys = m_ctx->control<Keys>(ControlId::Keys);
 
-  int fd = m_keys->fd(Keys::Key::Power);
-
-  m_notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
-  QObject::connect(m_notifier, &QSocketNotifier::activated,
-		   this, [this]() {
-		     char c;
-		     while (::read(m_notifier->socket(), &c, sizeof(c)) > 0) {
-		       if (c == KEY_RELEASED) {
-			 setState(Released);
-		       } else if (c == KEY_PRESSED) {
-			 setState(Pressed);
-		       }
-		     }
-		   });
-
-  m_keys->monitor(Keys::Key::Power, true);
+  m_keys->monitor(Keys::Key::Power, [this](bool pressed) {
+      setState(pressed ? Pressed : Released);
+    });
 }
 
 PowerKey::~PowerKey() {
+  m_keys->monitor(Keys::Key::Power, nullptr);
+
   m_ctx->put(m_keys);
   m_keys = nullptr;
 
   delete m_ctx;
   m_ctx = nullptr;
+
+  delete m_loop;
+  m_loop = nullptr;
 }
 
 void PowerKey::setState(const PowerKey::State& state) {
